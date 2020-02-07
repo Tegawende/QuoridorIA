@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>QuoridorIA</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+
+    <br>
+    <h2 class="text-center">Quoridor IA</h2>
+    <br>
+    <div class="container">
+        <div class="row justify-content-center">
+
+
+            <table class="table table-bordered">
+                <tr>
+                    <td><div class="content" id="A9"></div></td>
+                    <td><div class="content" id="B9"></div></td>
+                    <td><div class="content" id="C9"></div></td>
+                    <td><div class="content" id="D9"></div></td>
+                    <td><div class="content" id="E9"><span class="dot bleu"></span></div></td>
+                    <td><div class="content" id="F9"></div></td>
+                    <td><div class="content" id="G9"></div></td>
+                    <td><div class="content" id="H9"></div></td>
+                    <td><div class="content" id="I9"></div></td>
+                </tr>
+                <tr>
+                    <td><div class="content" id="A8"></div></td>
+                    <td><div class="content" id="B8"></div></td>
+                    <td><div class="content" id="C8"></div></td>
+                    <td><div class="content" id="D8"></div></td>
+                    <td><div class="content" id="E8"></div></td>
+                    <td><div class="content" id="F8"></div></td>
+                    <td><div class="content" id="G8"></div></td>
+                    <td><div class="content" id="H8"></div></td>
+                    <td><div class="content" id="I8"></div></td>
+                </tr>
+                <tr>
+                    <td><div class="content" id="A7"></div></td>
+                    <td><div class="content" id="B7"></div></td>
+                    <td><div class="content" id="C7"></div></td>
+                    <td><div class="content" id="D7"></div></td>
+                    <td><div class="content" id="E7"></div></td>
+                    <td><div class="content" id="F7"></div></td>
+                    <td><div class="content" id="G7"></div></td>
+                    <td><div class="content" id="H7"></div></td>
+                    <td><div class="content" id="I7"></div></td>
+                </tr>
+                <tr>
+                    <td><div class="content" id="A6"></div></td>
+                    <td><div class="content" id="B6"></div></td>
+                    <td><div class="content" id="C6"></div></td>
+                    <td><div class="content" id="D6"></div></td>
+                    <td><div class="content" id="E6"></div></td>
+                    <td><div class="content" id="F6"></div></td>
+                    <td><div class="content" id="G6"></div></td>
+                    <td><div class="content" id="H6"></div></td>
+                    <td><div class="content" id="I6"></div></td>
+                </tr>
+                <tr>
+                    <td><div class="content" id="A5"><span class="dot green"></span></div></td>
+                    <td><div class="content" id="B5"></div></td>
+                    <td><div class="content" id="C5"></div></td>
+                    <td><div class="content" id="D5"></div></td>
+                    <td><div class="content" id="E5"></div></td>
+                    <td><div class="content" id="F5"></div></td>
+                    <td><div class="content" id="G5"></div></td>
+                    <td><div class="content" id="H5"></div></td>
+                    <td><div class="content" id="I5"><span class="dot yellow"></span></div></td>
+                </tr>
+                <tr>
+                    <td><div class="content" id="A4"></div></td>
+                    <td><div class="content" id="B4"></div></td>
+                    <td><div class="content" id="C4"></div></td>
+                    <td><div class="content" id="D4"></div></td>
+                    <td><div class="content" id="E4"></div></td>
+                    <td><div class="content" id="F4"></div></td>
+                    <td><div class="content" id="G4"></div></td>
+                    <td><div class="content" id="H4"></div></td>
+                    <td><div class="content" id="I4"></div></td>
+                </tr>
+                <tr>
+                    <td><div class="content" id="A3"></div></td>
+                    <td><div class="content" id="B3"></div></td>
+                    <td><div class="content" id="C3"></div></td>
+                    <td><div class="content" id="D3"></div></td>
+                    <td><div class="content" id="E3"></div></td>
+                    <td><div class="content" id="F3"></div></td>
+                    <td><div class="content" id="G3"></div></td>
+                    <td><div class="content" id="H3"></div></td>
+                    <td><div class="content" id="I3"></div></td>
+                </tr>
+                <tr>
+                    <td><div class="content" id="A2"></div></td>
+                    <td><div class="content" id="B2"></div></td>
+                    <td><div class="content" id="C2"></div></td>
+                    <td><div class="content" id="D2"></div></td>
+                    <td><div class="content" id="E2"></div></td>
+                    <td><div class="content" id="F2"></div></td>
+                    <td><div class="content" id="G2"></div></td>
+                    <td><div class="content" id="H2"></div></td>
+                    <td><div class="content" id="I2"></div></td>
+                </tr>
+
+                <tr>
+                    <td><div class="content" id="A1"></div></td>
+                    <td><div class="content" id="B1"></div></td>
+                    <td><div class="content" id="C1"></div></td>
+                    <td><div class="content" id="D1"></div></td>
+                    <td><div class="content" id="E1"><span class="dot red"></span></div></td>
+                    <td><div class="content" id="F1"></div></td>
+                    <td><div class="content" id="G1"></div></td>
+                    <td><div class="content" id="H1"></div></td>
+                    <td><div class="content" id="I1"></div></td>
+                </tr>
+
+            </table>
+
+        </div>
+
+
+        <div class="row justify-content-center" style="padding-top: 10px;">
+
+            <div id="play-area" style="	border-radius : 5px;">
+                <div class="text-center" style="padding-top:5px">
+                    <label>C'est le tour du pion vert ! </label>
+                    <input type="text" id="action" />
+                </div>
+
+            </div>
+        </div>
+        <br />
+        <div class="row justify-content-center">
+
+            <div id="chatbox">
+                <label>
+                    Bonjour, je suis QBot, le bot explicateur de Quoridor IA.
+                </label>
+                <label>
+                    En quoi puis-je vous aider ?
+                </label>
+            </div>
+
+        </div>
+
+        <div class="row justify-content-center">
+            <textarea id="input-msg" placeholder="Écrivez votre question ici ..."></textarea>
+        </div>
+
+
+
+        </div>
+
+
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="scripts.js"></script>
+</body>
+</html>
