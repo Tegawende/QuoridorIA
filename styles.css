@@ -1,19 +1,39 @@
 /*** Board Game ****/
 
+
+
+
 .table {
   width: 32%;
 }
 
-td {
+#table-numbers td {
+	border-top:none;
+}
+
+#table-numbers span {
+	  display: inline-block;
+	 margin-top: 15%;
+}
+
+#table-numbers{
+	position: relative;
+	margin-right: -32%;
+	left : -32%
+}
+
+
+
+.table td {
   width: 10%;
   position: relative;
 }
-td:after {
+.table td:after {
   content: '';
   display: block;
   margin-top: 100%;
 }
-td .content {
+.table td .content {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -21,10 +41,34 @@ td .content {
   right: 0;
 }
 
-td {
+.table td {
 	text-align : center;
 
 }
+
+#table-letters td{
+	border-top:none;
+}
+
+
+
+@media screen and (max-width: 767px) {
+
+	#table-numbers {
+		margin-right: -39%;
+		left: -39%;
+	}
+}
+
+@media screen and (max-width: 564px) {
+
+	#table-numbers {
+		margin-right: -43%;
+		left: -43%;
+	}
+}
+
+
 
 .dot {
 height: 60%;
