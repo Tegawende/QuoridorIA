@@ -1,8 +1,6 @@
 /*** Board Game ****/
 
 
-
-
 .table {
   width: 32%;
 }
@@ -79,19 +77,19 @@ width: 60%;
   margin-top: 20%;
 }
 
-.red{
+#red{
 	background-color : #ff6969;
 }
 
-.yellow{
+#yellow{
 	background-color : #ffe097;
 }
 
-.bleu {
+#bleu {
 	background-color : #7fb6f0;
 }
 
-.green{
+#green{
 	background-color: #8be3a1;
 }
 
@@ -111,6 +109,10 @@ width: 60%;
 	
 	background-color:#639e6f59;
 	width : 70%;
+}
+
+.delay-custom{
+	animation-delay: .7s
 }
 
 

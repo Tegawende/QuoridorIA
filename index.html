@@ -5,6 +5,7 @@
     <title>QuoridorIA</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -128,7 +129,7 @@
                     <td><div class="content" id="B9"></div></td>
                     <td><div class="content" id="C9"></div></td>
                     <td><div class="content" id="D9"></div></td>
-                    <td><div class="content" id="E9"><span class="dot bleu"></span></div></td>
+                    <td><div class="content" id="E9"><span id="bleu" class="dot animated bounceInDown faster" ></span></div></td>
                     <td><div class="content" id="F9"></div></td>
                     <td><div class="content" id="G9"></div></td>
                     <td><div class="content" id="H9"></div></td>
@@ -168,7 +169,7 @@
                     <td><div class="content" id="I6"></div></td>
                 </tr>
                 <tr>
-                    <td><div class="content" id="A5"><span class="dot green"></span></div></td>
+                    <td><div class="content" id="A5"><span id="green" class="dot animated bounceInDown fast"></span></div></td>
                     <td><div class="content" id="B5"></div></td>
                     <td><div class="content" id="C5"></div></td>
                     <td><div class="content" id="D5"></div></td>
@@ -176,7 +177,7 @@
                     <td><div class="content" id="F5"></div></td>
                     <td><div class="content" id="G5"></div></td>
                     <td><div class="content" id="H5"></div></td>
-                    <td><div class="content" id="I5"><span class="dot yellow"></span></div></td>
+                    <td><div class="content" id="I5"><span id="yellow" class="dot animated bounceInDown"></span></div></td>
                 </tr>
                 <tr>
                     <td><div class="content" id="A4"></div></td>
@@ -217,7 +218,7 @@
                     <td><div class="content" id="B1"></div></td>
                     <td><div class="content" id="C1"></div></td>
                     <td><div class="content" id="D1"></div></td>
-                    <td><div class="content" id="E1"><span class="dot red"></span></div></td>
+                    <td><div class="content" id="E1"><span id="red" class="dot animated bounceInDown fast" ></span></div></td>
                     <td><div class="content" id="F1"></div></td>
                     <td><div class="content" id="G1"></div></td>
                     <td><div class="content" id="H1"></div></td>
@@ -248,8 +249,9 @@
 
             <div id="play-area" style="	border-radius : 5px;">
                 <div class="text-center" style="padding-top:5px">
-                    <label>C'est le tour du pion vert ! </label>
+                    <label id="game-info"  class="animated  fadeInLeft delay-custom">C'est le tour du pion <span id="current-player">bleu</span> ! </label>
                     <input type="text" id="action" />
+					<label id="error" class="text-danger animated fadeInDown"></label>
                 </div>
 
             </div>
