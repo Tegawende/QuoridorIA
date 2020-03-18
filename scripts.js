@@ -79,13 +79,19 @@ $(function () {
 				turnCompleted = true;
 			}
 			// Action = wall
-			else if (fields[0].toLowerCase() == "mur" && cells.includes(fields[1].toLowerCase()) && ['H', 'V'].includes(fields[2].toLowerCase())) {
+			else if (fields[0].toLowerCase() == "mur" && cells.includes(fields[1].toLowerCase()) && ['h', 'v'].includes(fields[2].toLowerCase())) {
+
+
+				var cell = fields[1].toLowerCase();
+				var direction = fields[2].toLowerCase();
+
+				addWall(cell, direction);
 
 				msg = {
 					request_type: "game",
 					action: "wall",
-					cell: fields[1].toLowerCase(),
-					direction: fields[2].toLowerCase()
+					cell: cell,
+					direction: direction
 
 				}
 
@@ -125,11 +131,27 @@ function movePawn($pawn, cell) {
 	if (!$pawn.hasClass("heartBeat")) {
 		$pawn.addClass("heartBeat");
 	}
-	$("#" + cell.toUpperCase()).append($pawn);
+	$("#" + cell.toLowerCase()).append($pawn);
 }
 
 function addWall(cell, direction) {
+	var $cellA = $("#" + cell.toLowerCase());
+	var letter = cell.slice(0, 1);
+	var num = parseInt(cell.substr(cell.length - 1), 10);
 
+	// Horizontal wall
+	if (direction == "h") {
+		var newLetter = String.fromCharCode(letter.charCodeAt() + 1);
+		var $cellB = $("#" + newLetter + "" + num);
+		$cellA.css("border-bottom", "4px solid");
+		$cellB.css("border-bottom", "4px solid");
+	}
+	// Vertical wall
+	if (direction == "v") {
+		var $cellB = $("#" + letter + "" + (num - 1));
+		$cellA.css("border-right", "4px solid");
+		$cellB.css("border-right", "4px solid");
+	}
 }
 
 function wsMessageHandler(event) {
