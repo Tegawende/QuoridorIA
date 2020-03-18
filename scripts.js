@@ -1,98 +1,158 @@
+$(function () {
 
-$(function() { 
+	// We create the socket
+	const connection = openWebSocket();
 
-	setTimeout(function(){
-		$("#game-info").removeClass("delay-custom")	
+	// Player order : bleu -> rouge -> vert -> jaune
+	var currentPlayer = "bleu";
+
+	const cells = [
+		'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9',
+		'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9',
+		'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9',
+		'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8', 'd9',
+		'e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7', 'e8', 'e9',
+		'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9',
+		'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8', 'g9',
+		'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'h9',
+		'i1', 'i2', 'i3', 'i4', 'i5', 'i6', 'i7', 'i8', 'i9',
+	];
+
+	// For pawns animations
+	setTimeout(function () {
+		$("#game-info").removeClass("delay-custom");
 		$("#bleu").removeClass("bounceInDown faster");
 		$("#green").removeClass("bounceInDown faster");
 	}, 3000);
 
-	// Color order : bleu -> rouge -> vert -> jaune
-	
-	var currentPlayer = "bleu";
-	
 
-	// Chatbot
+
+	// Chatbot inputs
 	$("#input-msg").keypress(function (e) {
-    if(e.which == 13 && !e.shiftKey) {    
-            $("#chatbox").append("<label> Vous : " + $(this).val() + "</label>");
+		if (e.which == 13 && !e.shiftKey) {
+			$("#chatbox").append("<label> Vous : " + $(this).val() + "</label>");
 			$("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
-			var msg =  $(this).val();
-            $(this).val("");
+			var msg = $(this).val();
+			$(this).val("");
 			e.preventDefault();
-        }
-    });
-	
-	
+		}
+	});
+
 	// Game inputs
 	$("#action").keypress(function (e) {
-		if(e.which == 13 && !e.shiftKey) { 
+		if (e.which == 13 && !e.shiftKey) {
+
 			var action = $(this).val();
-			
+			var msg;
 			var $err = $("#error");
-			$err.remove();
-			
-			if(action.startsWith(currentPlayer) || action.startsWith("mur")){
-				
-			var fields = action.split('-');
-			
-			// Moves
-			if(action.startsWith(currentPlayer)){
-				
-				var color = fields[0];
-				var cell = fields[1];
-				var test = fields[2];
-				
-				if(currentPlayer == "bleu"){
+			$err.html("");
+			var fields = action.split("-");
+			var turnCompleted = false;
+
+			// Action = move
+			if (fields[0].toLowerCase() == currentPlayer && cells.includes(fields[1].toLowerCase())) {
+
+				cell = fields[1].toLowerCase();
+
+				if (currentPlayer == "bleu") {
 					var $pawn = $("#bleu");
-					$pawn.remove();
-					if(!$pawn.hasClass("heartBeat")){
-						$pawn.addClass("heartBeat");
-					}
-					$("#" + cell).append($pawn);
-				}else{
+					movePawn($pawn, cell);
+				} else {
 					var $pawn = $("#green");
-					$pawn.remove();
-					if(!$pawn.hasClass("heartBeat")){
-						$pawn.addClass("heartBeat");
-					}
-					$("#" + cell).append($pawn);
+					movePawn($pawn, cell);
 				}
-				
-				
-			// Walls	
-			}else{
-				var cell = fields[1];
-				var position = fields[2];
+
+				msg = {
+					action: "move",
+					cell: fields[1].toLowerCase(),
+					color: fields[0].toLowerCase()
+				}
+				sendMessage(connection, JSON.stringify(msg))
+				turnCompleted = true;
 			}
-		
-				
-				
-			// Update game info label
-			if(currentPlayer == "bleu"){
-				currentPlayer = "vert";
-			}else{
-				currentPlayer = "bleu";
+			// Action = wall
+			else if (fields[0].toLowerCase() == "mur" && cells.includes(fields[1].toLowerCase()) && ['H', 'V'].includes(fields[2].toLowerCase())) {
+
+				msg = {
+					action: "wall",
+					cell: fields[1].toLowerCase(),
+					direction: fields[2].toLowerCase()
+
+				}
+
+				sendMessage(connection, JSON.stringify(msg))
+				turnCompleted = true;
 			}
-			$("#current-player").html("");
-			$("#current-player").html(currentPlayer);
-			
-			var $infoLabel = $("#game-info");
-			$infoLabel.remove();
-			$("#play-area div").prepend($infoLabel);
-				
-			}else{
+			else {
+				// Invalid action 
+				$err.remove();
 				$err.html("L'action '" + action + "' n'est pas valide ! ");
 				$("#play-area div").append($err);
 			}
-	
+
 			$(this).val("");
+			if (turnCompleted) {
+				if (currentPlayer == "bleu") {
+					currentPlayer = "vert";
+				} else {
+					currentPlayer = "bleu";
+				}
+				$("#current-player").html("");
+				$("#current-player").html(currentPlayer);
+
+				var $infoLabel = $("#game-info");
+				$infoLabel.remove();
+				$("#play-area div").prepend($infoLabel);
+			}
 
 		}
 	});
-	
-	
 
-	
- });
+});
 
+
+function movePawn($pawn, cell) {
+	$pawn.remove();
+	if (!$pawn.hasClass("heartBeat")) {
+		$pawn.addClass("heartBeat");
+	}
+	$("#" + cell.toUpperCase()).append($pawn);
+}
+
+function addWall(cell, direction) {
+
+}
+
+function wsMessageHandler(event) {
+	const msg = JSON.parse(event.data);
+	console.log("[Server] responded " + event.data);
+
+	switch (msg.action) {
+		case "move":
+			var $pawn = $("#" + msg.color);
+			movePawn($pawn, msg.cell)
+			break;
+		case "wall":
+			addWall(msg.cell, msg.direction);
+			break;
+		default: console.log("Error !");
+			break;
+	}
+}
+
+function sendMessage(connection, message) {
+	console.log("[Client] sending message " + message);
+	connection.send(message);
+}
+
+function openWebSocket() {
+	const WS_PROTO = "ws://";
+	const WS_ROUTE = "/quoridorIA";
+
+	connection = new WebSocket(WS_PROTO + window.location.host + WS_ROUTE);
+	connection.onerror = error => {
+		console.log("[Error] " + JSON.stringify(error));
+	};
+	connection.onmessage = wsMessageHandler;
+	return connection;
+}
