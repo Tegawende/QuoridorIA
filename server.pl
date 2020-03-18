@@ -1,7 +1,6 @@
 % INSTRUCTIONS
-% =swipl echo-server.pl=
-% =:- start.=
-%
+% Open server.pl with SWI-Prolog
+% Use the command start. to start the server
 % Then navigate to http://localhost:4000 in your browser
 
 
@@ -29,8 +28,8 @@
 :- http_handler(root(.),
                 http_reply_from_files('.', []),
                 [prefix]).
-% * root(echo) indicates we're matching the echo path on the URL e.g.
-%   localhost:3000/echo of the server
+% * root(quoridorIA) indicates we're matching the quoridorIA path on the URL e.g.
+%   localhost:3000/quoridorIA of the server
 % * We create a closure using =http_upgrade_to_websocket=
 % * The option =spawn= is used to spawn a thread to handle each new
 %   request (not strictly necessary, but otherwise we can only handle one
@@ -68,8 +67,15 @@ echo(WebSocket) :-
 
 %! get_response(+Message, -Response) is det.
 % Pull the message content out of the JSON converted to a prolog dict
-% then add the current time, then pass it back up to be sent to the
-% client
+% then pass it back up to be sent to the client
 get_response(Message, Response) :-
-  get_time(Time),
-  Response = _{action:"move",  cell: "a2", color : "yellow" }.
+  game_request(Message.request_type),
+  Response = _{action:'move',  cell: 'a2', color : 'red', request_type : 'game' }.
+
+
+get_response(Message, Response) :-
+  bot_request(Message.request_type),
+  Response = _{response : 'Désolé, je suis toujours en construction pour le moment :)', request_type : 'bot' }.
+
+bot_request("bot").
+game_request("game").

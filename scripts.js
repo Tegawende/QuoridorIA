@@ -23,6 +23,8 @@ $(function () {
 		$("#game-info").removeClass("delay-custom");
 		$("#bleu").removeClass("bounceInDown faster");
 		$("#green").removeClass("bounceInDown faster");
+		$("#yellow").removeClass("bounceInDown faster");
+		$("#red").removeClass("bounceInDown faster");
 	}, 3000);
 
 
@@ -32,9 +34,14 @@ $(function () {
 		if (e.which == 13 && !e.shiftKey) {
 			$("#chatbox").append("<label> Vous : " + $(this).val() + "</label>");
 			$("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
-			var msg = $(this).val();
+			var question = $(this).val();
+			var msg = {
+				request_type: "bot",
+				question: question,
+			}
 			$(this).val("");
 			e.preventDefault();
+			sendMessage(connection, JSON.stringify(msg));
 		}
 	});
 
@@ -63,6 +70,7 @@ $(function () {
 				}
 
 				msg = {
+					request_type: "game",
 					action: "move",
 					cell: fields[1].toLowerCase(),
 					color: fields[0].toLowerCase()
@@ -74,6 +82,7 @@ $(function () {
 			else if (fields[0].toLowerCase() == "mur" && cells.includes(fields[1].toLowerCase()) && ['H', 'V'].includes(fields[2].toLowerCase())) {
 
 				msg = {
+					request_type: "game",
 					action: "wall",
 					cell: fields[1].toLowerCase(),
 					direction: fields[2].toLowerCase()
@@ -125,18 +134,36 @@ function addWall(cell, direction) {
 
 function wsMessageHandler(event) {
 	const msg = JSON.parse(event.data);
-	console.log("[Server] responded " + event.data);
+	console.log("[Server] responded " + decodeURIComponent(escape(JSON.stringify(msg))));
 
-	switch (msg.action) {
-		case "move":
-			var $pawn = $("#" + msg.color);
-			movePawn($pawn, msg.cell)
+	switch (msg.request_type) {
+
+		case "game":
+			switch (msg.action) {
+				case "move":
+					var $pawn = $("#" + msg.color);
+					setTimeout(function () {
+						movePawn($pawn, msg.cell)
+					}, 1500);
+					break;
+				case "wall":
+					setTimeout(function () {
+						addWall(msg.cell, msg.direction);
+					}, 1500);
+					break;
+				default: console.log("Error !");
+					break;
+			}
 			break;
-		case "wall":
-			addWall(msg.cell, msg.direction);
+		case "bot":
+			setTimeout(function () {
+				$("#chatbox").append("<label> QBot : " + decodeURIComponent(escape(msg.response)) + "</label>");
+				$("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
+			}, 750);
 			break;
 		default: console.log("Error !");
 			break;
+
 	}
 }
 
