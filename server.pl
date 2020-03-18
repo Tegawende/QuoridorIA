@@ -68,14 +68,23 @@ echo(WebSocket) :-
 %! get_response(+Message, -Response) is det.
 % Pull the message content out of the JSON converted to a prolog dict
 % then pass it back up to be sent to the client
+
+% Game behaviour
 get_response(Message, Response) :-
   game_request(Message.request_type),
   Response = _{action:'move',  cell: 'a2', color : 'red', request_type : 'game' }.
 
 
+
+% Bot behaviour 
 get_response(Message, Response) :-
   bot_request(Message.request_type),
-  Response = _{response : 'Désolé, je suis toujours en construction pour le moment :)', request_type : 'bot' }.
+  bot_response(Message.question, BotResponse),
+  Response = _{response : BotResponse, request_type : 'bot' }.
 
-bot_request("bot").
+% Code du bot à compléter ici
+bot_response(X,'Désolé, je ne suis pas encore fonctionnel :)').
+
+
 game_request("game").
+bot_request("bot").
