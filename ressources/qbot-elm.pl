@@ -1,126 +1,43 @@
-% INSTRUCTIONS
-% Open server.pl with SWI-Prolog
-% Use the command start. to start the server
-% Then navigate to http://localhost:5000 in your browser
-
-
-:- module(echo_server,
-  [ start/0,
-    stop/0
-  ]
-).
-
-
 :- use_module(library(lists)).
-:- use_module(library(http/thread_httpd)).
-:- use_module(library(http/http_dispatch)).
-:- use_module(library(http/http_files)).
-:- use_module(library(http/websocket)).
 
-% http_handler docs: http://www.swi-prolog.org/pldoc/man?predicate=http_handler/3
-% =http_handler(+Path, :Closure, +Options)=
-%
-% * root(.) indicates we're matching the root URL
-% * We create a closure using =http_reply_from_files= to serve up files
-%   in the local directory
-% * The option =spawn= is used to spawn a thread to handle each new
-%   request (not strictly necessary, but otherwise we can only handle one
-%   client at a time since echo will block the thread)
-:- http_handler(root(.),
-                http_reply_from_files('.', []),
-                [prefix]).
-% * root(quoridorIA) indicates we're matching the quoridorIA path on the URL e.g.
-%   localhost:5000/quoridorIA of the server
-% * We create a closure using =http_upgrade_to_websocket=
-% * The option =spawn= is used to spawn a thread to handle each new
-%   request (not strictly necessary, but otherwise we can only handle one
-%   client at a time since echo will block the thread)
-:- http_handler(root(quoridorIA),
-                http_upgrade_to_websocket(echo, []),
-                [spawn([])]).
-
-start :-
-    default_port(Port),
-    start(Port).
-start(Port) :-
-    http_server(http_dispatch, [port(Port)]).
-
-stop() :-
-    default_port(Port),
-    stop(Port).
-stop(Port) :-
-    http_stop(Port, []).
-
-default_port(5000).
+/* --------------------------------------------------------------------- */
+/*                                                                       */
+/*        PRODUIRE_REPONSE(L_Mots,L_Lignes_reponse) :                    */
+/*                                                                       */
+/*        Input : une liste de mots L_Mots representant la question      */
+/*                de l'utilisateur                                       */
+/*        Output : une liste de liste de lignes correspondant a la       */
+/*                 reponse fournie par le bot                            */
+/*                                                                       */
+/*        NB Pour l'instant le predicat retourne dans tous les cas       */
+/*            [  [je, ne, sais, pas, '.'],                               */
+/*               [les, etudiants, vont, m, '\'', aider, '.'],            */
+/*               ['vous le verrez !']                                    */
+/*            ]                                                          */
+/*                                                                       */
+/*        Je ne doute pas que ce sera le cas ! Et vous souhaite autant   */
+/*        d'amusement a coder le predicat que j'ai eu a ecrire           */
+/*        cet enonce et ce squelette de solution !                       */
+/*                                                                       */
+/* --------------------------------------------------------------------- */
 
 
+/*                      !!!    A MODIFIER   !!!                          */
 
-%! echo(+WebSocket) is nondet.
-% This predicate is used to read in a message via websockets and echo it
-% back to the client
-echo(WebSocket) :-
-write('in'),
-    ws_receive(WebSocket, Message, [format(json)]),
-    ( Message.opcode == close
-    -> true
-    ; get_response(Message.data, Response),
-      write("Response: "), writeln(Response),
-      ws_send(WebSocket, json(Response)),
-      echo(WebSocket)
-    ).
+produire_reponse([fin],[L1]) :-
+   L1 = [merci, de, m, '\'', avoir, consulte], !.    
 
-%! get_response(+Message, -Response) is det.
-% Pull the message content out of the JSON converted to a prolog dict
-% then pass it back up to be sent to the client
-
-%╔════════════════════════════════════════════════════════════════╗
-%║                 IA                                             ║
-%╚════════════════════════════════════════════════════════════════╝
-
-get_response(Message, Response) :-
-  Message.request_type = "game",
-  Response = _{action:'move',  cell: 'a2', color : 'red', request_type : 'game' }.
-
-
-
-%╔════════════════════════════════════════════════════════════════╗
-%║                 Qbot                                           ║
-%╚════════════════════════════════════════════════════════════════╝
-
-get_response(Message, Response) :-
-  Message.request_type = "bot",
-  question_to_keywords(Message.question, Keywords),
-  produce_response(Keywords, ResponseTxt),
-  Response = _{response : ResponseTxt, request_type : 'bot' }.
-
-
-/*****************************************************************************/
-% question_to_keywords(Question, Keywords)
-%  Removes all punctuation characters from the string Question, and converts it
-%  into a list of atomic terms, e.g., [this,is,an,example].
-
-question_to_keywords(Question, Keywords) :-
-	string_lower(Question, LowerString),
-  string_codes(LowerString, Code),
-	clean_string(Code,Cleanstring),
-  extract_atomics(Cleanstring,Keywords).
-
-
-/*****************************************************************************/
-% produce_response(Keywords, Response) :                          
-% Keywords : list of keywords which represents user's question                                                                        
-% Response : the bot response
-
-
-produce_response(Keywords,Response) :-
-%   write(Keywords),
-   mclef(M,_), member(M,Keywords),
-   clause(regle_rep(M,_,Pattern,Response),Body),
-   match_pattern(Pattern,Keywords),
+produire_reponse(L,Rep) :-
+%   write(L),
+   mclef(M,_), member(M,L),
+   clause(regle_rep(M,_,Pattern,Rep),Body),
+   match_pattern(Pattern,L),
    call(Body), !.
 
-produce_response(_,'Désolé, je ne connais pas la réponse à votre question.').
-
+produire_reponse(_,[L1,L2, L3]) :-
+   L1 = [je, ne, sais, pas, '.'],
+   L2 = [les, etudiants, vont, m, '\'', aider, '.' ],
+   L3 = ['vous le verrez !'].
 
 match_pattern(Pattern,Lmots) :-
    sublist(Pattern,Lmots).
@@ -168,13 +85,16 @@ mclef(barrieres,5).
 
 regle_rep(commence,1,
   [ qui, commence, le, jeu ],
-  'C\'est au pion bleu de commencer. Puis aux pions rouge, vert et jaune.').
+  [ [ "c'est", au, pion, bleu, de, commencer ],
+    [ puis, aux, pions, "rouge," , vert, et, "bleu." ] ] ).
 
 % ----------------------------------------------------------------%
 
 regle_rep(barrieres,5,
   [ [ combien ], 3, [ barrieres ], 5, [ debut, du, jeu ] ],
-  'Vous disposez de 5 barrieres.').
+  [ [ vous, disposez, de, X, "barrieres." ] ]) :-
+
+     nb_barriere_par_joueur(X).
    
 
 
@@ -185,6 +105,10 @@ regle_rep(barrieres,5,
 /*                        LISTE DE MOTS                                  */
 /*                                                                       */
 /* --------------------------------------------------------------------- */
+
+% lire_question(L_Mots) 
+
+lire_question(LMots) :- read_atomics(LMots).
 
 
 
@@ -338,19 +262,123 @@ extract_atomics_aux([],[]).
 clean_string([C|Chars],L) :-
 	my_char_type(C,punctuation),
 	clean_string(Chars,L), !.
-
 clean_string([C|Chars],[C|L]) :-
 	clean_string(Chars,L), !.
-
 clean_string([C|[]],[]) :-
-my_char_type(C,punctuation), !.
-  
+	my_char_type(C,punctuation), !.
 clean_string([C|[]],[C]).
 
 
+/*****************************************************************************/
+% read_atomics(-ListOfAtomics)
+%  Reads a line of input, removes all punctuation characters, and converts
+%  it into a list of atomic terms, e.g., [this,is,an,example].
+
+read_atomics(ListOfAtomics) :-
+	read_lc_string(String),
+	clean_string(String,Cleanstring),
+	extract_atomics(Cleanstring,ListOfAtomics).
 
 
-:-start.
+
+/* --------------------------------------------------------------------- */
+/*                                                                       */
+/*        ECRIRE_REPONSE : ecrit une suite de lignes de texte            */
+/*                                                                       */
+/* --------------------------------------------------------------------- */
+
+ecrire_reponse(L) :-
+   nl, write('QBot :'),
+   ecrire_li_reponse(L,1,1).
+
+% ecrire_li_reponse(Ll,M,E)
+% input : Ll, liste de listes de mots (tout en minuscules)
+%         M, indique si le premier caractere du premier mot de 
+%            la premiere ligne doit etre mis en majuscule (1 si oui, 0 si non)
+%         E, indique le nombre d'espaces avant ce premier mot 
+
+ecrire_li_reponse([],_,_) :- 
+    nl.
+
+ecrire_li_reponse([Li|Lls],Mi,Ei) :- 
+   ecrire_ligne(Li,Mi,Ei,Mf),
+   ecrire_li_reponse(Lls,Mf,2).
+
+% ecrire_ligne(Li,Mi,Ei,Mf)
+% input : Li, liste de mots a ecrire
+%         Mi, Ei booleens tels que decrits ci-dessus
+% output : Mf, booleen tel que decrit ci-dessus a appliquer 
+%          a la ligne suivante, si elle existe
+
+ecrire_ligne([],M,_,M) :- 
+   nl.
+
+ecrire_ligne([M|L],Mi,Ei,Mf) :-
+   ecrire_mot(M,Mi,Maux,Ei,Eaux),
+   ecrire_ligne(L,Maux,Eaux,Mf).
+
+% ecrire_mot(M,B1,B2,E1,E2)
+% input : M, le mot a ecrire
+%         B1, indique s'il faut une majuscule (1 si oui, 0 si non)
+%         E1, indique s'il faut un espace avant le mot (1 si oui, 0 si non)
+% output : B2, indique si le mot suivant prend une majuscule
+%          E2, indique si le mot suivant doit etre precede d'un espace
+
+ecrire_mot('.',_,1,_,1) :-
+   write('. '), !.
+ecrire_mot('\'',X,X,_,0) :-
+   write('\''), !.
+ecrire_mot(',',X,X,E,1) :-
+   espace(E), write(','), !.
+ecrire_mot(M,0,0,E,1) :-
+   espace(E), write(M).
+ecrire_mot(M,1,0,E,1) :-
+   name(M,[C|L]),
+   D is C - 32,
+   name(N,[D|L]),
+   espace(E), write(N).
+
+espace(0).
+espace(N) :- N>0, Nn is N-1, write(' '), espace(Nn).
+
+
+/* --------------------------------------------------------------------- */
+/*                                                                       */
+/*                            TEST DE FIN                                */
+/*                                                                       */
+/* --------------------------------------------------------------------- */
+
+fin(L) :- member(fin,L).
+
+
+/* --------------------------------------------------------------------- */
+/*                                                                       */
+/*                         BOUCLE PRINCIPALE                             */
+/*                                                                       */
+/* --------------------------------------------------------------------- */
+
+quoridoria :- 
+
+   nl, nl, nl,
+   write('Bonjour, je suis QBot, le bot explicateur de QuoridorIA.'), nl,
+   write('En quoi puis-je vous aider ?'), 
+   nl, nl, 
+
+   repeat,
+      write('Vous : '), ttyflush,
+      lire_question(L_Mots),
+      produire_reponse(L_Mots,L_ligne_reponse),
+      ecrire_reponse(L_ligne_reponse),
+   fin(L_Mots), !.
+   
+
+/* --------------------------------------------------------------------- */
+/*                                                                       */
+/*             ACTIVATION DU PROGRAMME APRES COMPILATION                 */
+/*                                                                       */
+/* --------------------------------------------------------------------- */
+
+:- quoridoria.
 
 
 
