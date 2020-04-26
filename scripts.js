@@ -35,9 +35,10 @@ $(function () {
 			$("#chatbox").append("<label> Vous : " + $(this).val() + "</label>");
 			$("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
 			var question = $(this).val();
+
 			var msg = {
 				request_type: "bot",
-				question: question,
+				question: question.normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
 			}
 			$(this).val("");
 			e.preventDefault();
