@@ -26,10 +26,6 @@ $(function() {
         color: "red",
         cell: "e1"
     }
-    green = {
-        color: "green",
-        cell: "a5"
-    }
 
     // For pawns animations
     setTimeout(function() {
