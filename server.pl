@@ -77,9 +77,13 @@ write('in'),
 %║                 IA                                             ║
 %╚════════════════════════════════════════════════════════════════╝
 
+gauche("i5","h5").
+gauche("h5","g5").
+
 get_response(Message, Response) :-
   Message.request_type = "game",
-  Response = _{action:'move',  cell: 'a2', color : 'red', request_type : 'game' }.
+  gauche(Message.cell,X),
+  Response = _{action: 'move', cell: X, color: 'yellow', request_type : 'game' }.
 
 
 
@@ -108,12 +112,12 @@ question_to_keywords(Question, Keywords) :-
 
 /*****************************************************************************/
 % produce_response(Keywords, Response) :                          
-% Keywords : list of keywords which represents user's question                                                                        
+% Keywords : list of keywords which represents user's question'                                                                        
 % Response : the bot response
 
 
 produce_response(Keywords,Response) :-
-%   write(Keywords),
+   % write(Keywords),
    mclef(M,_), member(M,Keywords),
    clause(regle_rep(M,_,Pattern,Response),Body),
    match_pattern(Pattern,Keywords),
@@ -121,6 +125,9 @@ produce_response(Keywords,Response) :-
 
 produce_response(_,'Désolé, je ne connais pas la réponse à votre question.').
 
+%╔════════════════════════════════════════════════════════════════╗
+%║                 Gestion des données entrées                    ║
+%╚════════════════════════════════════════════════════════════════╝
 
 match_pattern(Pattern,Lmots) :-
    sublist(Pattern,Lmots).
@@ -162,7 +169,7 @@ nb_barriere_par_joueur(5).
 mclef(commence,10).
 mclef(barriere,5).
 mclef(barrieres,5).
-
+mclef(deplacer,10).
 
 % ----------------------------------------------------------------%
 
@@ -175,7 +182,6 @@ regle_rep(commence,1,
 regle_rep(barrieres,5,
   [ [ combien ], 3, [ barrieres ], 5, [ debut, du, jeu ] ],
   'Vous disposez de 5 barrieres.').
-   
 
 
 
