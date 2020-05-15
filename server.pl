@@ -51,7 +51,7 @@ stop() :-
 stop(Port) :-
     http_stop(Port, []).
 
-default_port(5000).
+default_port(5001).
 
 
 
@@ -59,7 +59,6 @@ default_port(5000).
 % This predicate is used to read in a message via websockets and echo it
 % back to the client
 echo(WebSocket) :-
-write('in'),
     ws_receive(WebSocket, Message, [format(json)]),
     ( Message.opcode == close
     -> true
@@ -113,9 +112,13 @@ question_to_keywords(Question, Keywords) :-
 
 
 produce_response(Keywords,Response) :-
-%   write(Keywords),
-   mclef(M,_), member(M,Keywords),
-   clause(regle_rep(M,_,Pattern,Response),Body),
+
+   mclef(M), member(M,Keywords),
+   clause(regle_rep(M,Pattern,Response),Body),
+   write('\n pattern = '),
+   write(Pattern),
+   write('\n Keyword = '),
+   write(Keywords),
    match_pattern(Pattern,Keywords),
    call(Body), !.
 
@@ -129,15 +132,17 @@ match_pattern(LPatterns,Lmots) :-
    match_pattern_dist([100|LPatterns],Lmots).
 
 match_pattern_dist([],_).
+
 match_pattern_dist([N,Pattern|Lpatterns],Lmots) :-
    within_dist(N,Pattern,Lmots,Lmots_rem),
+
    match_pattern_dist(Lpatterns,Lmots_rem).
 
 within_dist(_,Pattern,Lmots,Lmots_rem) :-
-   prefixrem(Pattern,Lmots,Lmots_rem).
+   prefixrem(Pattern,Lmots,Lmots_rem),write('\n in1').
 within_dist(N,Pattern,[_|Lmots],Lmots_rem) :-
    N > 1, Naux is N-1,
-  within_dist(Naux,Pattern,Lmots,Lmots_rem).
+  within_dist(Naux,Pattern,Lmots,Lmots_rem),write('\n in2').
 
 
 sublist(SL,L) :- 
@@ -159,25 +164,71 @@ nb_barriere_par_joueur(5).
 
 % ----------------------------------------------------------------%
 
-mclef(commence,10).
-mclef(barriere,5).
-mclef(barrieres,5).
-
+mclef(commence).
+mclef(barriere).
+mclef(barrieres).
+mclef(deplacer).
+mclef(placer).
+mclef(sauter).
+mclef(coup).
 
 % ----------------------------------------------------------------%
 
-regle_rep(commence,1,
-  [ qui, commence, le, jeu ],
+regle_rep(commence,
+  [ [qui, commence], 3, [jeu] ],
   'C\'est au pion bleu de commencer. Puis aux pions rouge, vert et jaune.').
 
 % ----------------------------------------------------------------%
 
-regle_rep(barrieres,5,
-  [ [ combien ], 3, [ barrieres ], 5, [ debut, du, jeu ] ],
+regle_rep(barrieres,
+ [ [ combien ], 3, [ barrieres ], 5, [ debut, du, jeu ] ],
   'Vous disposez de 5 barrieres.').
    
 
+% ----------------------------------------------------------------%
 
+regle_rep(deplacer,
+  [ [deplacer], 3, [barriere], 3, [placee] ],
+  'Non').
+
+  % ----------------------------------------------------------------%
+
+regle_rep(sauter,
+  [ [sauter], 3, [dessus], 3 , [pion] ],
+  'En principe oui mais vous ne pouvez pas enfermer un pion adverse.').
+
+regle_rep(sauter,
+  [ [sauter], 3, [audessus], 3 , [pion] ],
+  'En principe oui mais vous ne pouvez pas enfermer un pion adverse.').
+
+  % ----------------------------------------------------------------%
+
+regle_rep(placer,
+  [ [placer], 3, [barriere], 5, [ou, je, veux] ],
+  'Oui, s\'il n\'est pas suivi d\'un autre pion ou d\'une barrière').
+
+
+  % ----------------------------------------------------------------%
+
+regle_rep(coup, [ [pion], 3, [bleu], 4, [coup] ], Move) :- advice_move(blue, Move).
+
+regle_rep(coup, [ [pion], 3,[vert],4, [coup] ], Move) :- advice_move(green, Move).
+
+regle_rep(coup,[ [pion], 3,[rouge], 4, [coup] ], Move) :- advice_move(red, Move).
+
+regle_rep(coup, [ [pion], 3,[jaune], 4, [coup] ], Move) :- advice_move(yellow, Move).
+
+
+
+
+% À compléter !!! 
+% Il faudra utiliser l'IA pour proposer à l'utilisateur un coup 
+
+
+advice_move(blue, 'bleu-A1').
+advice_move(red, 'rouge-A1').
+advice_move(yellow, 'jaune-A1').
+advice_move(green, 'vert-A1').
 
 /* --------------------------------------------------------------------- */
 /*                                                                       */
