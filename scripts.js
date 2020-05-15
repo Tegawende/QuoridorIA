@@ -1,131 +1,4 @@
-<<<<<<< HEAD
 $(function () {
-
-	// We create the socket
-	const connection = openWebSocket();
-
-	// Player order : bleu -> rouge -> vert -> jaune
-	var currentPlayer = "bleu";
-
-	const cells = [
-		'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9',
-		'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9',
-		'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9',
-		'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8', 'd9',
-		'e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7', 'e8', 'e9',
-		'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9',
-		'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8', 'g9',
-		'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'h9',
-		'i1', 'i2', 'i3', 'i4', 'i5', 'i6', 'i7', 'i8', 'i9',
-	];
-
-	// For pawns animations
-	setTimeout(function () {
-		$("#game-info").removeClass("delay-custom");
-		$("#bleu").removeClass("bounceInDown faster");
-		$("#green").removeClass("bounceInDown faster");
-		$("#yellow").removeClass("bounceInDown faster");
-		$("#red").removeClass("bounceInDown faster");
-	}, 3000);
-
-
-
-	// Chatbot inputs
-	$("#input-msg").keypress(function (e) {
-		if (e.which == 13 && !e.shiftKey) {
-			$("#chatbox").append("<label> Vous : " + $(this).val() + "</label>");
-			$("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
-			var question = $(this).val();
-
-			var msg = {
-				request_type: "bot",
-				question: question.normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
-			}
-			$(this).val("");
-			e.preventDefault();
-			sendMessage(connection, JSON.stringify(msg));
-		}
-	});
-
-	// Game inputs
-	$("#action").keypress(function (e) {
-		if (e.which == 13 && !e.shiftKey) {
-
-			var action = $(this).val();
-			var msg;
-			var $err = $("#error");
-			$err.html("");
-			var fields = action.split("-");
-			var turnCompleted = false;
-
-			// Action = move
-			if (fields[0].toLowerCase() == currentPlayer && cells.includes(fields[1].toLowerCase())) {
-
-				cell = fields[1].toLowerCase();
-
-				if (currentPlayer == "bleu") {
-					var $pawn = $("#bleu");
-					movePawn($pawn, cell);
-				} else {
-					var $pawn = $("#green");
-					movePawn($pawn, cell);
-				}
-
-				msg = {
-					request_type: "game",
-					action: "move",
-					cell: fields[1].toLowerCase(),
-					color: fields[0].toLowerCase()
-				}
-				sendMessage(connection, JSON.stringify(msg))
-				turnCompleted = true;
-			}
-			// Action = wall
-			else if (fields[0].toLowerCase() == "mur" && cells.includes(fields[1].toLowerCase()) && ['h', 'v'].includes(fields[2].toLowerCase())) {
-
-
-				var cell = fields[1].toLowerCase();
-				var direction = fields[2].toLowerCase();
-
-				addWall(cell, direction);
-
-				msg = {
-					request_type: "game",
-					action: "wall",
-					cell: cell,
-					direction: direction
-
-				}
-
-				sendMessage(connection, JSON.stringify(msg))
-				turnCompleted = true;
-			}
-			else {
-				// Invalid action 
-				$err.remove();
-				$err.html("L'action '" + action + "' n'est pas valide ! ");
-				$("#play-area div").append($err);
-			}
-
-			$(this).val("");
-			if (turnCompleted) {
-				if (currentPlayer == "bleu") {
-					currentPlayer = "vert";
-				} else {
-					currentPlayer = "bleu";
-				}
-				$("#current-player").html("");
-				$("#current-player").html(currentPlayer);
-
-				var $infoLabel = $("#game-info");
-				$infoLabel.remove();
-				$("#play-area div").prepend($infoLabel);
-			}
-
-		}
-	});
-=======
-$(function() {
 
     // We create the socket
     const connection = openWebSocket();
@@ -155,7 +28,7 @@ $(function() {
     }
 
     // For pawns animations
-    setTimeout(function() {
+    setTimeout(function () {
         $("#game-info").removeClass("delay-custom");
         $("#bleu").removeClass("bounceInDown faster");
         $("#green").removeClass("bounceInDown faster");
@@ -166,7 +39,7 @@ $(function() {
 
 
     // Chatbot inputs
-    $("#input-msg").keypress(function(e) {
+    $("#input-msg").keypress(function (e) {
         if (e.which == 13 && !e.shiftKey) {
             $("#chatbox").append("<label> Vous : " + $(this).val() + "</label>");
             $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
@@ -182,7 +55,7 @@ $(function() {
     });
 
     // Game inputs
-    $("#action").keypress(function(e) {
+    $("#action").keypress(function (e) {
         if (e.which == 13 && !e.shiftKey) {
             var action = $(this).val();
             var msg;
@@ -263,7 +136,6 @@ $(function() {
 
         }
     });
->>>>>>> 7c70593cfa4f9c1ea4ef515555f772412bc87c35
 
 });
 
@@ -306,7 +178,7 @@ function wsMessageHandler(event) {
             switch (msg.action) {
                 case "move":
                     var $pawn = $("#" + msg.color);
-                    setTimeout(function() {
+                    setTimeout(function () {
                         movePawn($pawn, msg.cell)
                     }, 1500);
                     //permet de changer la position des différent bot
@@ -315,7 +187,7 @@ function wsMessageHandler(event) {
                     else green.cell = msg.cell // si c'est le vert            
                     break;
                 case "wall":
-                    setTimeout(function() {
+                    setTimeout(function () {
                         addWall(msg.cell, msg.direction);
                     }, 1500);
                     break;
@@ -325,7 +197,7 @@ function wsMessageHandler(event) {
             }
             break;
         case "bot":
-            setTimeout(function() {
+            setTimeout(function () {
                 $("#chatbox").append("<label> QBot : " + decodeURIComponent(escape(msg.response)) + "</label>");
                 $("#chatbox").scrollTop($("#chatbox")[0].scrollHeight);
             }, 750);
