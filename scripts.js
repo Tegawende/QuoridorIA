@@ -76,17 +76,24 @@ $(function() {
                 if (currentPlayer == "bleu") {
                     var $pawn = $("#bleu");
                     movePawn($pawn, cell);
+                    msg = {
+                        request_type: "game",
+                        action: "move",
+                        cell: red.cell,
+                        color: red.color
+                    }
                 } else {
                     var $pawn = $("#green");
                     movePawn($pawn, cell);
+                    msg = {
+                        request_type: "game",
+                        action: "move",
+                        cell: yellow.cell,
+                        color: yellow.color
+                    }
                 }
 
-                msg = {
-                    request_type: "game",
-                    action: "move",
-                    cell: yellow.cell,
-                    color: yellow.color
-                }
+
                 sendMessage(connection, JSON.stringify(msg))
                 turnCompleted = true;
             }
@@ -179,11 +186,9 @@ function wsMessageHandler(event) {
                         movePawn($pawn, msg.cell)
                     }, 1500);
                     //permet de changer la position des différent bot
-                    console.log(msg.color == "yellow")
                     if (msg.color == "yellow") yellow.cell = msg.cell
                     else if (msg.color == "red") red.cell = msg.cell
                     else green.cell = msg.cell // si c'est le vert            
-                    console.log(yellow)
                     break;
                 case "wall":
                     setTimeout(function() {

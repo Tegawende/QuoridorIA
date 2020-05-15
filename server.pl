@@ -80,10 +80,18 @@ write('in'),
 gauche("i5","h5").
 gauche("h5","g5").
 
+haut("e1", "e2").
+haut("e2", "e3").
+
 get_response(Message, Response) :-
   Message.request_type = "game",
   gauche(Message.cell,X),
   Response = _{action: 'move', cell: X, color: 'yellow', request_type : 'game' }.
+
+get_response(Message, Response) :-
+  Message.request_type = "game",
+  haut(Message.cell,X),
+  Response = _{action: 'move', cell: X, color: 'red', request_type : 'game' }.
 
 
 
