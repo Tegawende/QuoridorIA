@@ -79,6 +79,7 @@ nb_barriere_par_joueur(5).
 mclef(commence,10).
 mclef(barriere,5).
 mclef(barrieres,5).
+mclef(deplacer,10).
 
 
 % ----------------------------------------------------------------%
@@ -93,10 +94,11 @@ regle_rep(commence,1,
 regle_rep(barrieres,5,
   [ [ combien ], 3, [ barrieres ], 5, [ debut, du, jeu ] ],
   [ [ vous, disposez, de, X, "barrieres." ] ]) :-
-
      nb_barriere_par_joueur(X).
    
-
+regle_rep(deplacer, 1, 
+   [ [ puis, je, deplacer, une, barriere, placee ] ],
+   [ [ non, cest, interdis] ]).
 
 
 /* --------------------------------------------------------------------- */
