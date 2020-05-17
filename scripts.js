@@ -113,7 +113,7 @@ $(function () {
       $('#chatbox').append('<label> Vous : ' + $(this).val() + '</label>');
       $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
       var question = $(this).val();
-	  var q = question.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      var q = question.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
       var msg = {
         request_type: 'bot',
@@ -238,19 +238,24 @@ function addWall(cell, direction) {
   }
 }
 
-
 function isEncoded(uri) {
   uri = uri || '';
-  return uri !== decodeURIComponent(escape(uri));
+
+  let isEncoded = false;
+  try {
+    isEncoded = uri !== decodeURIComponent(escape(uri));
+  } catch (error) {}
+
+  return;
 }
 
 function wsMessageHandler(event) {
   const msgTmp = JSON.parse(event.data);
   var msg;
-  if(isEncoded(JSON.stringify(msgTmp))){
-	  msg = JSON.parse(decodeURIComponent(escape(JSON.stringify(msgTmp))));
-  }else{
-	    msg = msgTmp
+  if (isEncoded(JSON.stringify(msgTmp))) {
+    msg = JSON.parse(decodeURIComponent(escape(JSON.stringify(msgTmp))));
+  } else {
+    msg = msgTmp;
   }
   switch (msg.request_type) {
     case 'game':
