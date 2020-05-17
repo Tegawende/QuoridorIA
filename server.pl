@@ -51,7 +51,7 @@ stop() :-
 stop(Port) :-
     http_stop(Port, []).
 
-default_port(5001).
+default_port(5002).
 
 
 
@@ -99,6 +99,7 @@ get_response(Message, Response) :-
 %╚════════════════════════════════════════════════════════════════╝
 
 get_response(Message, Response) :-
+  write("\n test"),
   Message.request_type = "bot",
   question_to_keywords(Message.question, Keywords),
   produce_response(Keywords, ResponseTxt),
@@ -125,8 +126,8 @@ question_to_keywords(Question, Keywords) :-
 
 produce_response(Keywords,Response) :-
    % write(Keywords),
-   mclef(M,_), member(M,Keywords),
-   clause(regle_rep(M,_,Pattern,Response),Body),
+   mclef(M), member(M,Keywords),
+   clause(regle_rep(M,Pattern,Response),Body),
    match_pattern(Pattern,Keywords),
    call(Body), !.
 
