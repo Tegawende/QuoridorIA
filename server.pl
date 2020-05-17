@@ -99,7 +99,6 @@ get_response(Message, Response) :-
 %╚════════════════════════════════════════════════════════════════╝
 
 get_response(Message, Response) :-
-  write("\n test"),
   Message.request_type = "bot",
   question_to_keywords(Message.question, Keywords),
   produce_response(Keywords, ResponseTxt),
@@ -151,10 +150,10 @@ match_pattern_dist([N,Pattern|Lpatterns],Lmots) :-
    match_pattern_dist(Lpatterns,Lmots_rem).
 
 within_dist(_,Pattern,Lmots,Lmots_rem) :-
-   prefixrem(Pattern,Lmots,Lmots_rem),write('\n in1').
+   prefixrem(Pattern,Lmots,Lmots_rem).
 within_dist(N,Pattern,[_|Lmots],Lmots_rem) :-
    N > 1, Naux is N-1,
-  within_dist(Naux,Pattern,Lmots,Lmots_rem),write('\n in2').
+  within_dist(Naux,Pattern,Lmots,Lmots_rem).
 
 
 sublist(SL,L) :- 
