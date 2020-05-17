@@ -244,9 +244,9 @@ function isEncoded(uri) {
   let isEncoded = false;
   try {
     isEncoded = uri !== decodeURIComponent(escape(uri));
-  } catch (error) {}
+  } catch (error) { }
 
-  return;
+  return isEncoded;
 }
 
 function wsMessageHandler(event) {
