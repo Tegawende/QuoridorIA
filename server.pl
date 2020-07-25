@@ -10,12 +10,16 @@
   ]
 ).
 
+:- discontiguous echo_server:get_response/2.
 
 :- use_module(library(lists)).
 :- use_module(library(http/thread_httpd)).
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_files)).
 :- use_module(library(http/websocket)).
+
+:- include('quoridor.pl').
+:- include('minimax.pl').
 
 % http_handler docs: http://www.swi-prolog.org/pldoc/man?predicate=http_handler/3
 % =http_handler(+Path, :Closure, +Options)=
@@ -84,15 +88,19 @@ haut("e2", "e3").
 
 get_response(Message, Response) :-
   Message.request_type = "game",
-  gauche(Message.cell,X),
+  bestMove(Message.cell,X),
   Response = _{action: 'move', cell: X, color: 'yellow', request_type : 'game' }.
 
 get_response(Message, Response) :-
   Message.request_type = "game",
-  haut(Message.cell,X),
+  bestMove(Message.cell,X),
   Response = _{action: 'move', cell: X, color: 'red', request_type : 'game' }.
 
-
+% bestMove(+Pos, -NextPos)
+% Compute the best Next Position from Position Pos
+% with minimax or alpha-beta algorithm.
+bestMove(Pos, NextPos) :-
+    minimax(Pos, NextPos, _).
 
 %╔════════════════════════════════════════════════════════════════╗
 %║                 Qbot                                           ║
