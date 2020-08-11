@@ -632,23 +632,3 @@
 
 </html>
 
-<script>
-    const MIN = new Arc(0, 0)
-    const MAX = new Arc(10, 10)
-
-    console.log(
-        //minimax(0, 0, true, values, MIN, MAX)
-    )
-
-    console.log("suppression arc ")
-    b = new Board()
-    console.log(b.getListArc())
-    b.deleteArc(new Arc(new Case("B", "1"), new Case("C", "1")))
-    console.log(b)
-
-
-    console.log("changement pos joueur ")
-    console.log(b.getPosition())
-    b.setPositionJoueur("rouge", new Case("A", "4"))
-    console.log(b.getPosition())
-</script>

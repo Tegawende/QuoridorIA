@@ -1,6 +1,26 @@
-var currentPlayer = 'bleu';
 
-$(function() {
+$(function () {
+
+    var currentPlayer = 'bleu';
+    var walls = { "bleu": 5, "rouge": 5, "vert": 5, "jaune": 5 };
+    var board = new Board()
+
+    //const MIN = new Arc(0, 0)
+    //const MAX = new Arc(10, 10)
+
+    console.log(
+        //minimax(0, 0, true, values, MIN, MAX)
+    )
+
+
+    // console.log(b.getListArc())
+    // board.deleteArc(new Arc(new Case("B", "1"), new Case("C", "1")))
+    // console.log(b.getPosition())
+
+
+
+
+
     // We create the socket
     const connection = openWebSocket();
 
@@ -101,7 +121,7 @@ $(function() {
     };
 
     // For pawns animations
-    setTimeout(function() {
+    setTimeout(function () {
         $('#game-info').removeClass('delay-custom');
         $('#bleu').removeClass('bounceInDown faster');
         $('#green').removeClass('bounceInDown faster');
@@ -110,7 +130,7 @@ $(function() {
     }, 3000);
 
     // Chatbot inputs
-    $('#input-msg').keypress(function(e) {
+    $('#input-msg').keypress(function (e) {
         if (e.which == 13 && !e.shiftKey) {
             $('#chatbox').append('<label> Vous : ' + $(this).val() + '</label>');
             $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
@@ -128,7 +148,7 @@ $(function() {
     });
 
     // Game inputs
-    $('#action').keypress(function(e) {
+    $('#action').keypress(function (e) {
         if (e.which == 13 && !e.shiftKey) {
             var action = $(this).val();
             var msg;
@@ -142,29 +162,31 @@ $(function() {
                 fields[0].toLowerCase() == currentPlayer &&
                 cells.includes(fields[1].toLowerCase())
             ) {
-                cell = fields[1].toLowerCase();
+                cell = fields[1].toUpperCase();
 
                 if (currentPlayer == 'bleu') {
                     var $pawn = $('#bleu');
                     movePawn($pawn, cell);
-                    msg = {
-                        request_type: 'game',
-                        action: 'move',
-                        cell: red.cell,
-                        color: red.color,
-                    };
+                    // msg = {
+                    // request_type: 'game',
+                    // action: 'move',
+                    // cell: red.cell,
+                    // color: red.color,
+                    // };
                 } else {
                     var $pawn = $('#green');
                     movePawn($pawn, cell);
-                    msg = {
-                        request_type: 'game',
-                        action: 'move',
-                        cell: yellow.cell,
-                        color: yellow.color,
-                    };
+                    // msg = {
+                    // request_type: 'game',
+                    // action: 'move',
+                    // cell: yellow.cell,
+                    // color: yellow.color,
+                    // };
                 }
-
-                sendMessage(connection, JSON.stringify(msg));
+                console.log("Le pion " + currentPlayer + " se déplace en " + cell);
+                board.setPositionJoueur(currentPlayer, new Case(cell.charAt(0), cell.charAt(1)));
+                console.log(board.getPosition());
+                //sendMessage(connection, JSON.stringify(msg));
                 turnCompleted = true;
             }
             // Action = wall
@@ -175,16 +197,57 @@ $(function() {
                 var cell = fields[1].toLowerCase();
                 var direction = fields[2].toLowerCase();
 
+                if ((cell.charAt(1) == 1 && direction == "h") || (cell.charAt(1) == 1 && direction == "v") || (cell.charAt(0) == "i" && direction == "v")) {
+                    $err.remove();
+                    $err.html("Impossible de placer une barrière ici ! ");
+                    $('#play-area div').append($err);
+                    return;
+                }
+
+
+
                 addWall(cell, direction);
 
-                msg = {
-                    request_type: 'game',
-                    action: 'wall',
-                    cell: cell,
-                    direction: direction,
-                };
 
-                sendMessage(connection, JSON.stringify(msg));
+                // msg = {
+                //     request_type: 'game',
+                //     action: 'wall',
+                //     cell: cell,
+                //     direction: direction,
+                // };
+
+                // Lister les arcs à supprimer
+                let deletedArcs = [];
+                let letter = cell.charAt(0).toUpperCase();
+                var newLetter = String.fromCharCode(letter.charCodeAt() + 1);
+                let num = parseInt(cell.charAt(1), 10);
+
+                console.log("Un mur a été ajouté : " + letter + num + "-" + direction);
+
+                if (direction == "h") {
+                    deletedArcs.push(new Arc(new Case(letter, num), new Case(letter, num - 1)));
+                    deletedArcs.push(new Arc(new Case(letter, num - 1), new Case(letter, num)));
+                    deletedArcs.push(new Arc(new Case(newLetter, num), new Case(newLetter, num - 1)));
+                    deletedArcs.push(new Arc(new Case(newLetter, num - 1), new Case(newLetter, num),));
+                    console.log("Les arcs (bidirectionnels) suivants ont été supprimés : (" + letter + num + "," + letter + (num - 1) + ") et (" + newLetter + num + "," + newLetter + (num - 1) + ")");
+                } else {
+                    deletedArcs.push(new Arc(new Case(letter, num), new Case(newLetter, num)));
+                    deletedArcs.push(new Arc(new Case(newLetter, num), new Case(letter, num)));
+                    deletedArcs.push(new Arc(new Case(letter, num - 1), new Case(newLetter, num - 1)));
+                    deletedArcs.push(new Arc(new Case(newLetter, num - 1), new Case(letter, num),));
+                    console.log("Les arcs (bidirectionnels) suivants ont été supprimés : (" + letter + num + "," + newLetter + num + ") et (" + letter + (num - 1) + "," + newLetter + (num - 1) + ")");
+                }
+
+
+                console.log(board.getListArc());
+
+                deletedArcs.forEach(arc => {
+                    board.deleteArc(arc);
+                })
+
+                console.log(board.getListArc());
+
+                //sendMessage(connection, JSON.stringify(msg));
                 turnCompleted = true;
             } else {
                 // Invalid action
@@ -245,7 +308,7 @@ function isEncoded(uri) {
     let isEncoded = false;
     try {
         isEncoded = uri !== decodeURIComponent(escape(uri));
-    } catch (error) {}
+    } catch (error) { }
 
     return isEncoded;
 }
@@ -263,7 +326,7 @@ function wsMessageHandler(event) {
             switch (msg.action) {
                 case 'move':
                     var $pawn = $('#' + msg.color);
-                    setTimeout(function() {
+                    setTimeout(function () {
                         movePawn($pawn, msg.cell);
                     }, 1500);
                     //permet de changer la position des différent bot
@@ -272,7 +335,7 @@ function wsMessageHandler(event) {
                     else green.cell = msg.cell; // si c'est le vert
                     break;
                 case 'wall':
-                    setTimeout(function() {
+                    setTimeout(function () {
                         addWall(msg.cell, msg.direction);
                     }, 1500);
                     break;
@@ -282,7 +345,7 @@ function wsMessageHandler(event) {
             }
             break;
         case 'bot':
-            setTimeout(function() {
+            setTimeout(function () {
                 $('#chatbox').append('<label> QBot : ' + msg.response + '</label>');
                 $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
             }, 750);
