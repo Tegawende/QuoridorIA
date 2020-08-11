@@ -181,12 +181,12 @@ class Board {
             if (currentPlayer == 'rouge') return 1
             else return -1
         } else if (this.positionJoueur["jaune"].getX() == "A")
-            return -1
+            if (currentPlayer == 'jaune') return 1
+            else return -1
         else if (this.positionJoueur["vert"].getX() == "I")
             return -1
         else if (this.positionJoueur["bleu"].getY() == "1") {
-            if (currentPlayer == 'bleu') return 1
-            else return -1
+            return -1
         } else
             console.log("AIE AIE AIE c'est pas possible")
     }
