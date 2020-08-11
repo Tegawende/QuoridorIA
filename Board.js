@@ -191,5 +191,15 @@ class Board {
             console.log("AIE AIE AIE c'est pas possible")
     }
 
+    // color -> String
+    // newPos -> class Case
+    setPositionJoueur(color, newPos) {
+        this.positionJoueur[color] = newPos
+    }
+
+    getPosition() {
+        return this.positionJoueur
+    }
+
 
 }
