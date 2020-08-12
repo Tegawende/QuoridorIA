@@ -1,22 +1,19 @@
+$(function() {
 
-$(function () {
 
     var currentPlayer = 'bleu';
     var walls = { "bleu": 5, "rouge": 5, "vert": 5, "jaune": 5 };
     var board = new Board()
 
-    //const MIN = new Arc(0, 0)
-    //const MAX = new Arc(10, 10)
 
     console.log(
-        //minimax(0, 0, true, values, MIN, MAX)
+        minimax(0, 0, 'rouge', 'rouge', board, MIN, MAX)
     )
 
 
     // console.log(b.getListArc())
     // board.deleteArc(new Arc(new Case("B", "1"), new Case("C", "1")))
     // console.log(b.getPosition())
-
 
 
 
@@ -121,7 +118,7 @@ $(function () {
     };
 
     // For pawns animations
-    setTimeout(function () {
+    setTimeout(function() {
         $('#game-info').removeClass('delay-custom');
         $('#bleu').removeClass('bounceInDown faster');
         $('#green').removeClass('bounceInDown faster');
@@ -130,7 +127,7 @@ $(function () {
     }, 3000);
 
     // Chatbot inputs
-    $('#input-msg').keypress(function (e) {
+    $('#input-msg').keypress(function(e) {
         if (e.which == 13 && !e.shiftKey) {
             $('#chatbox').append('<label> Vous : ' + $(this).val() + '</label>');
             $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
@@ -148,7 +145,7 @@ $(function () {
     });
 
     // Game inputs
-    $('#action').keypress(function (e) {
+    $('#action').keypress(function(e) {
         if (e.which == 13 && !e.shiftKey) {
             var action = $(this).val();
             var msg;
@@ -228,13 +225,13 @@ $(function () {
                     deletedArcs.push(new Arc(new Case(letter, num), new Case(letter, num - 1)));
                     deletedArcs.push(new Arc(new Case(letter, num - 1), new Case(letter, num)));
                     deletedArcs.push(new Arc(new Case(newLetter, num), new Case(newLetter, num - 1)));
-                    deletedArcs.push(new Arc(new Case(newLetter, num - 1), new Case(newLetter, num),));
+                    deletedArcs.push(new Arc(new Case(newLetter, num - 1), new Case(newLetter, num), ));
                     console.log("Les arcs (bidirectionnels) suivants ont été supprimés : (" + letter + num + "," + letter + (num - 1) + ") et (" + newLetter + num + "," + newLetter + (num - 1) + ")");
                 } else {
                     deletedArcs.push(new Arc(new Case(letter, num), new Case(newLetter, num)));
                     deletedArcs.push(new Arc(new Case(newLetter, num), new Case(letter, num)));
                     deletedArcs.push(new Arc(new Case(letter, num - 1), new Case(newLetter, num - 1)));
-                    deletedArcs.push(new Arc(new Case(newLetter, num - 1), new Case(letter, num),));
+                    deletedArcs.push(new Arc(new Case(newLetter, num - 1), new Case(letter, num), ));
                     console.log("Les arcs (bidirectionnels) suivants ont été supprimés : (" + letter + num + "," + newLetter + num + ") et (" + letter + (num - 1) + "," + newLetter + (num - 1) + ")");
                 }
 
@@ -308,7 +305,7 @@ function isEncoded(uri) {
     let isEncoded = false;
     try {
         isEncoded = uri !== decodeURIComponent(escape(uri));
-    } catch (error) { }
+    } catch (error) {}
 
     return isEncoded;
 }
@@ -326,7 +323,7 @@ function wsMessageHandler(event) {
             switch (msg.action) {
                 case 'move':
                     var $pawn = $('#' + msg.color);
-                    setTimeout(function () {
+                    setTimeout(function() {
                         movePawn($pawn, msg.cell);
                     }, 1500);
                     //permet de changer la position des différent bot
@@ -335,7 +332,7 @@ function wsMessageHandler(event) {
                     else green.cell = msg.cell; // si c'est le vert
                     break;
                 case 'wall':
-                    setTimeout(function () {
+                    setTimeout(function() {
                         addWall(msg.cell, msg.direction);
                     }, 1500);
                     break;
@@ -345,7 +342,7 @@ function wsMessageHandler(event) {
             }
             break;
         case 'bot':
-            setTimeout(function () {
+            setTimeout(function() {
                 $('#chatbox').append('<label> QBot : ' + msg.response + '</label>');
                 $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
             }, 750);

@@ -22,4 +22,14 @@ class Arc {
             return false
         }
     }
+
+    setX(arc) {
+        this.x = arc
+    }
+
+    setY(arc) {
+        this.y = arc
+    }
+
+
 }

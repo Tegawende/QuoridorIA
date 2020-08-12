@@ -188,7 +188,7 @@ class Board {
         else if (this.positionJoueur["bleu"].getY() == "1") {
             return -1
         } else
-            console.log("AIE AIE AIE c'est pas possible")
+            return -1
     }
 
     // color -> String
