@@ -156,7 +156,7 @@ class Board {
             "rouge": new Case("E", "1"),
             "jaune": new Case("I", "5"),
             "vert": new Case("A", "5"),
-            "bleu": new Case("E", "9")
+            "bleu": new Case("D", "1")
         }
 
     }

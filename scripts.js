@@ -3,19 +3,9 @@ $(function () {
 
     var currentPlayer = 'bleu';
     var walls = { "bleu": 5, "rouge": 5, "vert": 5, "jaune": 5 };
-    var board = new Board()
+    var board = new Board();
 
 
-
-
-    console.log(
-        minimax(0, 0, 'rouge', 'rouge', board, MIN, MAX)
-    )
-
-
-    // console.log(b.getListArc())
-    // board.deleteArc(new Arc(new Case("B", "1"), new Case("C", "1")))
-    // console.log(b.getPosition())
 
 
 
@@ -155,7 +145,7 @@ $(function () {
             $err.html('');
             var fields = action.split('-');
             var turnCompleted = false;
-
+            console.log("Current player = " + currentPlayer);
             // Action = move
             if (
                 fields[0].toLowerCase() == currentPlayer &&
@@ -185,7 +175,6 @@ $(function () {
                 console.log("Le pion " + currentPlayer + " se déplace en " + cell);
                 board.setPositionJoueur(currentPlayer, new Case(cell.charAt(0), cell.charAt(1)));
                 console.log("Distance to win = " + (board.getDistanceToWin(currentPlayer)));
-                console.log(board.getPosition());
                 //sendMessage(connection, JSON.stringify(msg));
                 turnCompleted = true;
             }
@@ -259,12 +248,24 @@ $(function () {
             $(this).val('');
             if (turnCompleted) {
                 if (currentPlayer == 'bleu') {
-                    currentPlayer = 'vert';
+                    var bestMove = findBestMove(board, "rouge");
+                    var $pawn = $('#red');
+                    movePawn($pawn, bestMove.getY().getX() + "" + bestMove.getY().getY());
+                    console.log("Best move du rouge est : " + bestMove.getY().getX() + "" + bestMove.getY().getY());
+                    $('#current-player').html('');
+                    $('#current-player').html("vert");
+                    currentPlayer = "vert";
                 } else {
-                    currentPlayer = 'bleu';
+                    currentPlayer = 'jaune';
+                    var bestMove = findBestMove(board, "jaune");
+                    var $pawn = $('#yellow');
+                    movePawn($pawn, bestMove.getY().getX() + "" + bestMove.getY().getY());
+                    console.log("Best move du jaune est : " + bestMove.getY().getX() + "" + bestMove.getY().getY());
+                    $('#current-player').html('');
+                    $('#current-player').html("bleu");
+                    currentPlayer = "bleu";
                 }
-                $('#current-player').html('');
-                $('#current-player').html(currentPlayer);
+
 
                 var $infoLabel = $('#game-info');
                 $infoLabel.remove();
