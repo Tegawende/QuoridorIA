@@ -20,7 +20,7 @@ function minimax(depth, nodeIndex, maximizingPlayer, p, board, alpha, beta) {
     bleuMovePossible = moveSetPossible(board, 'bleu')
 
     if (depth == MAXDEPTH) {
-        return 1
+        return board.getDistanceToWin(p);
     }
 
     if (maximizingPlayer == 'rouge') {
@@ -164,7 +164,7 @@ function minimax(depth, nodeIndex, maximizingPlayer, p, board, alpha, beta) {
 function moveSetPossible(board, joueur) {
 
     //possition des joueur
-    let posJoueurs = {...board.getPosition() }
+    let posJoueurs = { ...board.getPosition() }
     var positionActuel = posJoueurs[joueur]
     delete posJoueurs[joueur]
 
@@ -175,7 +175,7 @@ function moveSetPossible(board, joueur) {
     // calcule deplacement possible 
     var movePossible = []
 
-    movePossible = listArc.filter(function(a) {
+    movePossible = listArc.filter(function (a) {
         return a.getX().compareCase(positionActuel) || a.getY().compareCase(positionActuel)
     })
 
