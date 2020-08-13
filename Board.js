@@ -164,7 +164,7 @@ class Board {
 
     // add wall
     deleteArc(arc) {
-        var newList = this.listArc.filter(function(a) {
+        var newList = this.listArc.filter(function (a) {
             return !a.compareArc(arc)
         })
         this.listArc = newList
@@ -173,6 +173,23 @@ class Board {
 
     getListArc() {
         return this.listArc
+    }
+
+    getDistanceToWin(color) {
+
+        switch (color) {
+            case "bleu":
+                return this.positionJoueur["bleu"].getY() - 1;
+            case "rouge":
+                return 9 - this.positionJoueur["rouge"].getY();
+
+            case "jaune":
+                //console.log(this.positionJoueur["jaune"].getX().charCodeAt(0) - 64) - 1;
+                return (this.positionJoueur["jaune"].getX().charCodeAt(0) - 64) - 1;
+
+            case "vert":
+                return 9 - (this.positionJoueur["vert"].getX().charCodeAt(0) - 64);
+        }
     }
 
 
