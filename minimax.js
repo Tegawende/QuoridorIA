@@ -25,15 +25,19 @@ function findBestMove(board, currentPlayer) {
     }
 
 
+    console.log("MP =" + JSON.stringify(movePossible));
+
     for (var i = 0; i < movePossible.length; i++) {
         board.setPositionJoueur(currentPlayer, movePossible[i].getY())
         var moveVal = minimax(MAXDEPTH, 0, currentPlayer, currentPlayer, board, MIN, MAX);
-
+        console.log("M val  =" + moveVal + " move =" + JSON.stringify(movePossible[i]));
         if (moveVal > bestVal) {
-            bestMove = rougeMovePossible[i];
+            bestMove = movePossible[i];
             bestVal = moveVal;
         }
     }
+
+    console.log("BM b =" + JSON.stringify(bestMove));
     return bestMove;
 
 }
@@ -48,7 +52,7 @@ function minimax(depth, nodeIndex, maximizingPlayer, currentPlayer, board, alpha
     bleuMovePossible = moveSetPossible(board, 'bleu')
 
     if (depth == MAXDEPTH) {
-        return board.getDistanceToWin(currentPlayer);
+        return - board.getDistanceToWin(currentPlayer);
     }
 
     if (maximizingPlayer == 'rouge') {

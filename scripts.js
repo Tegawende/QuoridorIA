@@ -250,20 +250,24 @@ $(function () {
                 if (currentPlayer == 'bleu') {
                     var bestMove = findBestMove(board, "rouge");
                     var $pawn = $('#red');
-                    movePawn($pawn, bestMove.getY().getX() + "" + bestMove.getY().getY());
-                    console.log("Best move du rouge est : " + bestMove.getY().getX() + "" + bestMove.getY().getY());
+                    movePawn($pawn, bestMove.getX().getX() + "" + bestMove.getX().getY());
+                    board.setPositionJoueur("rouge", bestMove.getX());
+                    console.log("Best move du rouge est : " + bestMove.getX().getX() + "" + bestMove.getX().getY());
                     $('#current-player').html('');
                     $('#current-player').html("vert");
                     currentPlayer = "vert";
+                    console.log("Positions = " + JSON.stringify(board.getPosition()));
                 } else {
                     currentPlayer = 'jaune';
                     var bestMove = findBestMove(board, "jaune");
                     var $pawn = $('#yellow');
-                    movePawn($pawn, bestMove.getY().getX() + "" + bestMove.getY().getY());
-                    console.log("Best move du jaune est : " + bestMove.getY().getX() + "" + bestMove.getY().getY());
+                    movePawn($pawn, bestMove.getX().getX() + "" + bestMove.getX().getY());
+                    board.setPositionJoueur("jaune", bestMove.getX());
+                    console.log("Best move du jaune est : " + bestMove.getX().getX() + "" + bestMove.getX().getY());
                     $('#current-player').html('');
                     $('#current-player').html("bleu");
                     currentPlayer = "bleu";
+                    console.log("Positions = " + JSON.stringify(board.getPosition()));
                 }
 
 
