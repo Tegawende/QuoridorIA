@@ -109,7 +109,7 @@ function minimax(depth, nodeIndex, maximizingPlayer, currentPlayer, board, alpha
                 best = Math.max(best, val);
                 alpha = Math.max(alpha, best);
 
-                // Alpha Beta Pruning 
+
                 if (beta <= alpha)
                     break;
             }
@@ -125,7 +125,7 @@ function minimax(depth, nodeIndex, maximizingPlayer, currentPlayer, board, alpha
                 best = Math.max(best, val);
                 alpha = Math.max(alpha, best);
 
-                // Alpha Beta Pruning 
+
                 if (beta <= alpha)
                     break;
             }
@@ -139,7 +139,7 @@ function minimax(depth, nodeIndex, maximizingPlayer, currentPlayer, board, alpha
                 best = Math.max(best, val);
                 alpha = Math.max(alpha, best);
 
-                // Alpha Beta Pruning 
+
                 if (beta <= alpha)
                     break;
             }
@@ -153,7 +153,7 @@ function minimax(depth, nodeIndex, maximizingPlayer, currentPlayer, board, alpha
                 best = Math.max(best, val);
                 alpha = Math.max(alpha, best);
 
-                // Alpha Beta Pruning 
+
                 if (beta <= alpha)
                     break;
             }
@@ -167,7 +167,7 @@ function minimax(depth, nodeIndex, maximizingPlayer, currentPlayer, board, alpha
                 best = Math.max(best, val);
                 alpha = Math.max(alpha, best);
 
-                // Alpha Beta Pruning 
+
                 if (beta <= alpha)
                     break;
             }
@@ -177,7 +177,7 @@ function minimax(depth, nodeIndex, maximizingPlayer, currentPlayer, board, alpha
 
 }
 
-//Return les movements possibles pour une possition donnée
+//Return les mouvements possibles pour une position donnée
 function moveSetPossible(board, joueur) {
 
     //Position des joueurs

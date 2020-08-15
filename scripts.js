@@ -5,16 +5,10 @@ $(function () {
     var walls = { "bleu": 5, "rouge": 5, "vert": 5, "jaune": 5 };
     var board = new Board();
 
-
-
-
-
-
     // We create the socket
     const connection = openWebSocket();
 
     // Player order : bleu -> rouge -> vert -> jaune
-
 
     const cells = [
         'a1',
